@@ -38,6 +38,15 @@ form.addEventListener("submit", function (e) {
   })
     .then((response) => response.json())
     .then((data) => {
-      console.log(data);
+      const newPostHtml = `<div class="post">
+                <h2>${data.title}</h2>
+                <p>${data.body}</p>
+                <hr />
+            </div>`;
+
+      document.getElementById("post-container").innerHTML =
+        newPostHtml + document.getElementById("post-container").innerHTML;
+
+      form.reset();
     });
 });
