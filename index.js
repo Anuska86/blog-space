@@ -1,32 +1,29 @@
 const form = document.getElementById("new-post");
+const postContainer = document.getElementById("post-container");
+
+function getPostHtml(post) {
+  return `<div class="post">
+            <h2>${post.title}</h2>
+            <p>${post.body}</p>
+            <hr />
+        </div>`;
+}
 
 fetch("https://apis.scrimba.com/jsonplaceholder/posts")
   .then((response) => response.json())
   .then((data) => {
     const postsArray = data.slice(0, 5);
 
-    const html = postsArray
-      .map((post) => {
-        return `<div class="post">
-                    <h2>${post.title}</h2>
-                    <p>${post.body}</p>
-                    <hr />
-                </div>`;
-      })
-      .join("");
-
-    document.getElementById("post-container").innerHTML = html;
+    const html = postsArray.map((post) => getPostHtml(post)).join("");
+    postContainer.innerHTML = html;
   });
 
 form.addEventListener("submit", function (e) {
   e.preventDefault();
 
-  const postTitle = document.getElementById("post-title").value;
-  const postBody = document.getElementById("post-body").value;
-
   const newPost = {
-    title: postTitle,
-    body: postBody,
+    title: document.getElementById("post-title").value,
+    body: (postBody = document.getElementById("post-body").value),
   };
 
   fetch("https://apis.scrimba.com/jsonplaceholder/posts", {
@@ -37,16 +34,8 @@ form.addEventListener("submit", function (e) {
     },
   })
     .then((response) => response.json())
-    .then((data) => {
-      const newPostHtml = `<div class="post">
-                <h2>${data.title}</h2>
-                <p>${data.body}</p>
-                <hr />
-            </div>`;
-
-      document.getElementById("post-container").innerHTML =
-        newPostHtml + document.getElementById("post-container").innerHTML;
-
+    .then((postData) => {
+      postContainer.innerHTML = getPostHtml(postData) + postContainer.innerHTML;
       form.reset();
     });
 });
