@@ -1,3 +1,5 @@
+const form = document.getElementById("new-post");
+
 fetch("https://apis.scrimba.com/jsonplaceholder/posts")
   .then((response) => response.json())
   .then((data) => {
@@ -15,3 +17,27 @@ fetch("https://apis.scrimba.com/jsonplaceholder/posts")
 
     document.getElementById("post-container").innerHTML = html;
   });
+
+form.addEventListener("submit", function (e) {
+  e.preventDefault();
+
+  const postTitle = document.getElementById("post-title").value;
+  const postBody = document.getElementById("post-body").value;
+
+  const newPost = {
+    title: postTitle,
+    body: postBody,
+  };
+
+  fetch("https://apis.scrimba.com/jsonplaceholder/posts", {
+    method: "POST",
+    body: JSON.stringify(newPost),
+    headers: {
+      "Content-Type": "application/json",
+    },
+  })
+    .then((response) => response.json())
+    .then((data) => {
+      console.log(data);
+    });
+});
