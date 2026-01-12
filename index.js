@@ -9,6 +9,7 @@ function getPostHtml(post) {
         </div>`;
 }
 
+//Get posts
 fetch("https://apis.scrimba.com/jsonplaceholder/posts")
   .then((response) => response.json())
   .then((data) => {
@@ -18,6 +19,7 @@ fetch("https://apis.scrimba.com/jsonplaceholder/posts")
     postContainer.innerHTML = html;
   });
 
+//Submit
 form.addEventListener("submit", function (e) {
   e.preventDefault();
 
