@@ -1,43 +1,50 @@
 const form = document.getElementById("new-post");
 const postContainer = document.getElementById("post-container");
+let postsArray = [];
 
-function getPostHtml(post) {
-  return `<div class="post">
+//Render posts
+
+function renderPosts() {
+  const html = postsArray
+    .map(
+      (post) => `
+        <div class="post">
             <h2>${post.title}</h2>
             <p>${post.body}</p>
-            <hr />
-        </div>`;
+        </div>
+    `
+    )
+    .join("");
+  postContainer.innerHTML = html;
 }
 
 //Get posts
 fetch("https://apis.scrimba.com/jsonplaceholder/posts")
-  .then((response) => response.json())
+  .then((res) => res.json())
   .then((data) => {
-    const postsArray = data.slice(0, 5);
-
-    const html = postsArray.map((post) => getPostHtml(post)).join("");
-    postContainer.innerHTML = html;
+    postsArray = data.slice(0, 5);
+    renderPosts();
   });
 
 //Submit
 form.addEventListener("submit", function (e) {
   e.preventDefault();
 
-  const newPost = {
-    title: document.getElementById("post-title").value,
-    body: (postBody = document.getElementById("post-body").value),
-  };
+  const postTitle = document.getElementById("post-title").value;
+  const postBody = document.getElementById("post-body").value;
+  const newPostData = { title: postTitle, body: postBody };
 
   fetch("https://apis.scrimba.com/jsonplaceholder/posts", {
     method: "POST",
-    body: JSON.stringify(newPost),
-    headers: {
-      "Content-Type": "application/json",
-    },
+    body: JSON.stringify(newPostData),
+    headers: { "Content-Type": "application/json" },
   })
-    .then((response) => response.json())
-    .then((postData) => {
-      postContainer.innerHTML = getPostHtml(postData) + postContainer.innerHTML;
+    .then((res) => res.json())
+    .then((newPost) => {
+      // Add the new post from the server response to the top of our list
+      postsArray.unshift(newPost);
+      renderPosts();
       form.reset();
-    });
+    })
+    .catch((err) => console.error("Error posting data:", err));
 });
